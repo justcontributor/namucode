@@ -8,7 +8,7 @@ export class TableSnippetProvider implements vscode.CompletionItemProvider {
       context: vscode.CompletionContext
     ): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
       const linePrefix = document.lineAt(position).text.substring(0, position.character);
-      const match = linePrefix.match(/(?:^|\s)table(\d{1,2})\*(\d{1,2})$/);
+      const match = linePrefix.match(/(?:^|\s)table([1-9]|[1-4][0-9]|50)\*([1-9]|[1-4][0-9]|50)$/);
 
       if (match) {
         const rows = parseInt(match[1]);
