@@ -24,7 +24,7 @@ export class WikiCodeActionProvider implements vscode.CodeActionProvider {
           { label: '삼중괄호', code: `{{{${selected}}}}` }
         ].forEach(({ label, code }) => {
           const action = new vscode.CodeAction(
-            `${label} 구문으로 선택 영역 감싸기`,
+            `선택 영역 구문 감싸기: ${label} 구문`,
             vscode.CodeActionKind.RefactorRewrite,
           );
           action.edit = new vscode.WorkspaceEdit();
@@ -71,7 +71,7 @@ export class WikiCodeActionProvider implements vscode.CodeActionProvider {
           .replace(startRegex, '')
           .replace(/(?:\r?\n[ \t]*)?\}\}\}$/, '');
 
-        const action = new vscode.CodeAction(`현재 위치한 ${kind} 구문 벗기기`, vscode.CodeActionKind.RefactorRewrite);
+        const action = new vscode.CodeAction(`현재 위치한 구문 벗기기: ${kind} 구문`, vscode.CodeActionKind.RefactorRewrite);
         action.edit = new vscode.WorkspaceEdit();
         action.edit.replace(document.uri, new vscode.Range(document.positionAt(start), document.positionAt(end)), unwrapped);
 
