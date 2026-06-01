@@ -86,7 +86,7 @@ export class MarkPreview {
 
                 if (urlPath === "/") {
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/dist/media/reset.css" rel="stylesheet"><title>Namucode Preview</title></head><body><div id="app"></div><script>const pid = new URLSearchParams(location.search).get('panelId') || ''; var vscode = { postMessage: msg => fetch('/postMessage?panelId=' + encodeURIComponent(pid), { method: 'POST', body: JSON.stringify(msg) }) }; function acquireVsCodeApi() { return vscode; }</script><script src="/dist/frontend/assets/main.js"></script><script src="/dist/media/script.js"></script><script>new EventSource('/stream?panelId=' + encodeURIComponent(pid)).onmessage = e => { const s = JSON.parse(e.data), p = (t, d) => window.postMessage({ type: t, ...d }, "*"); p("updateTitle", { title: s.title }); p("updateReferenced", { referenced: s.referenced }); p("updateParameterMap", { parameterMap: s.parameterMap }); p("updateSetting", { setting: s.setting }); if (s.content) p("updateContent", s.content); };</script></body></html>`);
+                    res.end(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/dist/media/reset.css" rel="stylesheet"><title>${path.basename(panelId)}</title></head><body><div id="app"></div><script>const pid = new URLSearchParams(location.search).get('panelId') || ''; var vscode = { postMessage: msg => fetch('/postMessage?panelId=' + encodeURIComponent(pid), { method: 'POST', body: JSON.stringify(msg) }) }; function acquireVsCodeApi() { return vscode; }</script><script src="/dist/frontend/assets/main.js"></script><script src="/dist/media/script.js"></script><script>new EventSource('/stream?panelId=' + encodeURIComponent(pid)).onmessage = e => { const s = JSON.parse(e.data), p = (t, d) => window.postMessage({ type: t, ...d }, "*"); p("updateTitle", { title: s.title }); p("updateReferenced", { referenced: s.referenced }); p("updateParameterMap", { parameterMap: s.parameterMap }); p("updateSetting", { setting: s.setting }); if (s.content) p("updateContent", s.content); };</script></body></html>`);
                 } else if (urlPath === "/stream") {
                     res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' });
                     const listener = (id: string, s: any) => { if (id === pid) res.write(`data: ${JSON.stringify(s)}\n\n`); };
@@ -120,7 +120,7 @@ export class MarkPreview {
             });
             await new Promise<void>(r => MarkPreview.previewServer!.listen(0, "127.0.0.1", () => { MarkPreview.previewServerPort = (MarkPreview.previewServer!.address() as any).port; r(); }));
         }
-        vscode.env.openExternal(vscode.Uri.parse(`http://127.0.0.1:${MarkPreview.previewServerPort}/?panelId=${encodeURIComponent(panelId)}`));
+        vscode.commands.executeCommand("workbench.action.browser.open", `http://127.0.0.1:${MarkPreview.previewServerPort}/?panelId=${encodeURIComponent(panelId)}`)
     }
 
     public static revive(
