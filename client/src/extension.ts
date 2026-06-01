@@ -175,11 +175,6 @@ export async function activate(context: ExtensionContext) {
   const preview = vscode.commands.registerCommand("namucode.preview", async ({ retry = false, editorComment = false }) => {
     const editor = vscode.window.activeTextEditor;
 
-    if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-      vscode.window.showWarningMessage('폴더가 열려 있지 않아 미리보기를 사용할 수 없습니다.');
-      return;
-    }
-
     if (retry) {
       if (!MarkPreview.currentActivePanelId) {
         vscode.window.showWarningMessage('현재 열려 있는 미리보기 탭이 없습니다.');

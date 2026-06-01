@@ -358,11 +358,11 @@ export class MarkPreview {
         const loadWorkspaceResources = async (currentFolder: vscode.WorkspaceFolder) => {
             const rootConfig = vscode.workspace.getConfiguration("namucode");
             const workspaceReference = rootConfig.get<boolean>("preview.workspaceReference", true);
-
+            const isFolderOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             const startTime = performance.now();
 
             let workspaceDocuments = []
-            if (workspaceReference && currentFolder) {
+            if (isFolderOpen && workspaceReference && currentFolder) {
                 const namuFiles = await vscode.workspace.findFiles("**/*.namu")  
                 const decoder = new TextDecoder('utf-8');
 
@@ -455,9 +455,13 @@ export class MarkPreview {
 
             const referencedTitles = workspaceDocuments.map(document => document.title)
 
-            const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath
+            const isFolderOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+            let titleString = path.basename(document.uri.fsPath)
+            if (isFolderOpen) {
+                const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath
+                titleString = path.relative(rootPath, document.uri.fsPath).replaceAll(/\\/g, "/").split(".").slice(0, -1).join(".");
+            }
 
-            const titleString = path.relative(rootPath, document.uri.fsPath).replaceAll(/\\/g, "/").split(".").slice(0, -1).join(".");
             webview.postMessage({ type: "updateTitle", title: titleString })
             webview.postMessage({ type: "updateReferenced", referenced: referencedTitles })
             webview.postMessage({ type: "updateParameterMap", parameterMap: includeData })
