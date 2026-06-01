@@ -20,6 +20,7 @@ export class WikiCodeActionProvider implements vscode.CodeActionProvider {
           { label: 'folding', code: `{{{#!folding \n${selected}\n}}}` },
           { label: 'if', code: `{{{#!if \n${selected}\n}}}` },
           { label: 'syntax', code: `{{{#!syntax \n${selected}\n}}}` },
+          { label: 'html', code: `{{{#!html ${selected}}}}` },
           { label: '삼중괄호', code: `{{{${selected}}}}` }
         ].forEach(({ label, code }) => {
           const action = new vscode.CodeAction(
